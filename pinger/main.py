@@ -2,7 +2,14 @@ import yaml
 import typing
 import httpx
 import os
+import sys
 import asyncio
+import watchdog
+import logging
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+log = logging.getLogger(__name__)
 
 CONFIG_FILE = "config.yaml"
 
@@ -19,20 +26,28 @@ class Config(typing.TypedDict):
 
 client = httpx.AsyncClient()
 
+config: Config = {}
+
+class ConfigHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        log.info("Config file modified")
+        read_config(CONFIG_FILE)
+
 def read_config(name):
     """
     Read the yaml config
     """
+    global config
 
     if not os.path.exists(name):
-        print(f"Config '{name}' file does not exist")
+        log.critical(f"Config '{name}' file does not exist")
         sys.exit(1)
 
     with open(name, 'r') as stream:
         try:
-            config: Config = yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
+            config = yaml.safe_load(stream)
+        except yaml.YAMLError:
+            log.exception("Error parsing config file")
 
     config.setdefault("interval", 60)
     config.setdefault("timeout", 10)
@@ -57,7 +72,7 @@ async def ping(site: ConfigSite):
 
     try:
         url = site["url"] + site["endpoint"]
-        print("Pinging", url)
+        log.info(f"Pinging {url}")
         response = await client.get(url)
     except:
         return False
@@ -67,27 +82,39 @@ async def ping(site: ConfigSite):
 
     return True
 
-async def ping_forever(cfg: Config):
+async def ping_forever():
     """
     Ping forever
     """
 
     while True:
         try:
-            for site in cfg["sites"]:
+            for site in config["sites"]:
                 if not await ping(site):
-                    print("Site", site["name"], "is down")
-            print("Sleeping for", cfg["interval"], "seconds")
-            await asyncio.sleep(cfg["interval"])
+                    log.info(f"Site {site['name']} is down")
+            log.info(f"Sleeping for {config['interval']} seconds")
+            await asyncio.sleep(config["interval"])
         except KeyboardInterrupt:
             break
 
 
 async def run():
 
-    config = read_config(CONFIG_FILE)
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s - %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S')
 
-    await ping_forever(config)
+    read_config(CONFIG_FILE)
+
+    event_handler = ConfigHandler()
+    observer = Observer()
+    observer.schedule(event_handler, path='./', recursive=False)
+    observer.start()
+
+    await ping_forever()
+
+    observer.stop()
+    observer.join()
 
 def main():
     asyncio.run(run())

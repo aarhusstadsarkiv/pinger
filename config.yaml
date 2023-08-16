@@ -1,7 +1,11 @@
-interval: 10
+interval: 2
 timeout: 5
 sites:
   - name: Web Backend
+    url: https://dev.openaws.dk
+    endpoint: /api/health
+    expected_status: 200
+  - name: Web Backend 2
     url: https://dev.openaws.dk
     endpoint: /api/health
     expected_status: 200
