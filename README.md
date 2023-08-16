@@ -24,4 +24,4 @@ sites:
 
 Install with pipx:
 
-`pipx install git+`
+`pipx install git+https://github.com/aarhusstadsarkiv/pinger.git`
