@@ -1,6 +1,7 @@
 import yaml
 import typing
 import httpx
+import os
 import asyncio
 
 CONFIG_FILE = "config.yaml"
@@ -22,6 +23,10 @@ def read_config(name):
     """
     Read the yaml config
     """
+
+    if not os.path.exists(name):
+        print(f"Config '{name}' file does not exist")
+        sys.exit(1)
 
     with open(name, 'r') as stream:
         try:
@@ -78,11 +83,14 @@ async def ping_forever(cfg: Config):
             break
 
 
-async def main():
+async def run():
 
     config = read_config(CONFIG_FILE)
 
     await ping_forever(config)
 
+def main():
+    asyncio.run(run())
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
