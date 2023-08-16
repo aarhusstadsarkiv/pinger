@@ -1,0 +1,7 @@
+interval: 10
+timeout: 5
+sites:
+  - name: Web Backend
+    url: https://dev.openaws.dk
+    endpoint: /api/health
+    expected_status: 200
