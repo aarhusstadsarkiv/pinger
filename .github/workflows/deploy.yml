@@ -8,7 +8,7 @@ on:
 env:
   PYTHON_VERSION: "3.11"
   POETRY_VERSION: "1.6.1"
-  PATH: "/var/www/pinger"
+  DEPLOY_PATH: "/var/www/pinger"
 
 jobs:
   test:
@@ -50,7 +50,7 @@ jobs:
           key: ${{ secrets.GH_SSH_PRIVATE_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           source: "run.sh"
-          target: "${{ env.PATH }}/run.sh"
+          target: "${{ env.DEPLOY_PATH }}/run.sh"
 
       - name: pipx install
         uses: appleboy/ssh-action@v0.1.10
@@ -61,6 +61,6 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           script_stop: false # setting this to true does not work well as of 0.1.10. most likely a bug in the action
           script: |
-            cd ${{ env.PATH }}
+            cd ${{ env.DEPLOY_PATH }}
             pipx install -f git+https://github.com/aarhusstadsarkiv/pinger.git@${{ github.sha }}
             ./run.sh
