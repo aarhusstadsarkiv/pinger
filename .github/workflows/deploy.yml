@@ -3,7 +3,7 @@ name: test and deploy
 on:
   push:
     branches:
-      - dev
+      - main
 
 env:
   PYTHON_VERSION: "3.11"
