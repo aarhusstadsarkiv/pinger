@@ -53,7 +53,7 @@ jobs:
           key: ${{ secrets.GH_SSH_PRIVATE_KEY }}
           port: ${{ vars.DEPLOY_PORT }}
           source: "run.sh"
-          target: "${{ env.DEPLOY_PATH }}/run.sh"
+          target: "${{ env.DEPLOY_PATH }}"
 
       - name: pipx install
         uses: appleboy/ssh-action@v0.1.10
