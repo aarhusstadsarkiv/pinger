@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pinger"
-version = "1.0.0"
+version = "1.0.1"
 description = ""
 authors = ["iSplasher <isplasher@gmail.com>"]
 readme = "README.md"

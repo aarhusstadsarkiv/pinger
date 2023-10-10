@@ -1,0 +1,66 @@
+name: test and deploy
+
+on:
+  push:
+    branches:
+      - dev
+
+env:
+  PYTHON_VERSION: "3.11"
+  POETRY_VERSION: "1.6.1"
+  PATH: "/var/www/pinger"
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ env.POETRY_VERSION }}
+
+      - name: Setup git user
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git commit --allow-empty -m "CI Deploy [ci skip]"
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Test
+        run: |
+          poetry run poetry pinger/test_main.py
+
+  deploy:
+    name: pipx install on server
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Copy run.sh
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ vars.DEPLOY_HOST }}
+          username: ${{ vars.GH_SSH_USERNAME }}
+          key: ${{ secrets.GH_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          source: "run.sh"
+          target: "${{ env.PATH }}/run.sh"
+
+      - name: pipx install
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ vars.DEPLOY_HOST }}
+          username: ${{ vars.GH_SSH_USERNAME }}
+          key: ${{ secrets.GH_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          script_stop: false # setting this to true does not work well as of 0.1.10. most likely a bug in the action
+          script: |
+            cd ${{ env.PATH }}
+            pipx install -f git+https://github.com/aarhusstadsarkiv/pinger.git@${{ github.sha }}
+            ./run.sh
