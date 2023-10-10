@@ -35,7 +35,7 @@ jobs:
 
       - name: Test
         run: |
-          poetry run poetry pinger/test_main.py
+          poetry run python pinger/test_main.py
 
   deploy:
     name: pipx install on server
