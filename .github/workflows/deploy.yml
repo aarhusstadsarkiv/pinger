@@ -54,6 +54,7 @@ jobs:
           port: ${{ vars.DEPLOY_PORT }}
           source: "run.sh"
           target: "${{ env.DEPLOY_PATH }}"
+          overwrite: true
 
       - name: pipx install
         uses: appleboy/ssh-action@v0.1.10
