@@ -66,5 +66,6 @@ jobs:
           script_stop: false # setting this to true does not work well as of 0.1.10. most likely a bug in the action
           script: |
             cd ${{ env.DEPLOY_PATH }}
+            pipx ensurepath
             pipx install -f git+https://github.com/aarhusstadsarkiv/pinger.git@${{ github.sha }}
             ./run.sh
