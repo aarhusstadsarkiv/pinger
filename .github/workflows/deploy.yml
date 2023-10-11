@@ -65,6 +65,7 @@ jobs:
           port: ${{ vars.DEPLOY_PORT }}
           script_stop: false # setting this to true does not work well as of 0.1.10. most likely a bug in the action
           script: |
+            exec bash \-l
             cd ${{ env.DEPLOY_PATH }}
             pipx install -f git+https://github.com/aarhusstadsarkiv/pinger.git@${{ github.sha }}
             pipx ensurepath
