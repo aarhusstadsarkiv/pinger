@@ -63,7 +63,7 @@ jobs:
           username: ${{ vars.GH_SSH_USERNAME }}
           key: ${{ secrets.GH_SSH_PRIVATE_KEY }}
           port: ${{ vars.DEPLOY_PORT }}
-          script_stop: false # setting this to true does not work well as of 0.1.10. most likely a bug in the action
+          script_stop: true # setting this to true does not work well as of 0.1.10. most likely a bug in the action
           script: |
             exec bash \-l
             cd ${{ env.DEPLOY_PATH }}
