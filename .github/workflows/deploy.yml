@@ -65,7 +65,7 @@ jobs:
           port: ${{ vars.DEPLOY_PORT }}
           script_stop: true
           script: |
-            exec bashfix;
+            exec bash;
             cd ${{ env.DEPLOY_PATH }}
             pipx install -f git+https://github.com/aarhusstadsarkiv/pinger.git@${{ github.sha }}
             pipx ensurepath
