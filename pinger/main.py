@@ -82,20 +82,25 @@ async def ping(site: ConfigSite):
 
     return True
 
-async def ping_forever():
+async def ping_forever(site: ConfigSite):
     """
     Ping forever
     """
 
     while True:
         try:
-            for site in config["sites"]:
-                if not await ping(site):
-                    log.info(f"Site {site['name']} is down")
+            if not await ping(site):
+                log.info(f"Site {site['name']} is down")
             log.info(f"Sleeping for {config['interval']} seconds")
             await asyncio.sleep(config["interval"])
         except KeyboardInterrupt:
             break
+
+async def ping_sites():
+    """
+    Ping sites forever
+    """
+    await asyncio.gather(*[ping_forever(site) for site in config["sites"]])
 
 
 async def run():
@@ -111,7 +116,7 @@ async def run():
     observer.schedule(event_handler, path='./', recursive=False)
     observer.start()
 
-    await ping_forever()
+    await ping_sites()
 
     observer.stop()
     observer.join()
