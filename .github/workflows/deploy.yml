@@ -69,4 +69,4 @@ jobs:
             cd ${{ env.DEPLOY_PATH }}
             pipx install -f git+https://github.com/aarhusstadsarkiv/pinger.git@${{ github.sha }}
             pipx ensurepath
-            ./run.sh
+            ./run.sh & disown
