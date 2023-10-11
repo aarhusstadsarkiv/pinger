@@ -70,4 +70,4 @@ jobs:
             pipx install -f git+https://github.com/aarhusstadsarkiv/pinger.git@${{ github.sha }}
             pipx ensurepath
             kill $(ps aux | grep 'pinger' | awk '{print $2}')
-            nohup ./run.sh &
+            ./run.sh
