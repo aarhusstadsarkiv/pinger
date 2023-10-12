@@ -69,28 +69,30 @@ async def ping(site: ConfigSite):
     """
     Ping a site
     """
-
+    s = True
     try:
         url = site["url"] + site["endpoint"]
         log.info(f"Pinging {url}")
         response = await client.get(url)
     except:
-        return False
+        s = False
 
     if response.status_code != site["expected_status"]:
-        return False
+        s = False
 
-    return True
+    if not s:
+        log.info(f"Site {site['name']} is down")
+    return s
 
 async def ping_forever(site: ConfigSite):
     """
     Ping forever
     """
 
+    _task = None
     while True:
         try:
-            if not await ping(site):
-                log.info(f"Site {site['name']} is down")
+            _task = asyncio.create_task(ping(site))
             log.info(f"Sleeping for {config['interval']} seconds")
             await asyncio.sleep(config["interval"])
         except KeyboardInterrupt:
