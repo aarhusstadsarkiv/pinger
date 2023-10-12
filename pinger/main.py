@@ -74,10 +74,10 @@ async def ping(site: ConfigSite):
         url = site["url"] + site["endpoint"]
         log.info(f"Pinging {url}")
         response = await client.get(url)
-    except:
-        s = False
 
-    if response.status_code != site["expected_status"]:
+        if response.status_code != site["expected_status"]:
+            s = False
+    except:
         s = False
 
     if not s:
