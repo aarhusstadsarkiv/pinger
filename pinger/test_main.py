@@ -50,6 +50,7 @@ class TestPing(unittest.IsolatedAsyncioTestCase):
 
     async def test_ping_failure(self):
         site = {
+            "name": "Google",
             "url": "https://www.google.com",
             "endpoint": "/",
             "expected_status": 200
@@ -63,6 +64,7 @@ class TestPing(unittest.IsolatedAsyncioTestCase):
 
     async def test_ping_exception(self):
         site = {
+            "name": "Google",
             "url": "https://www.google.com",
             "endpoint": "/",
             "expected_status": 200
