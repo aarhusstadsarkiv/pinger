@@ -36,6 +36,7 @@ class TestReadConfig(unittest.TestCase):
 class TestPing(unittest.IsolatedAsyncioTestCase):
     async def test_ping_success(self):
         site = {
+            "name": "Google",
             "url": "https://www.google.com",
             "endpoint": "/",
             "expected_status": 200
